@@ -50,7 +50,55 @@
   }
 }
 
+DrawAtlas() {
+  global
 
+  image_file := "" A_ScriptDir "\images\atlas.png" ""
+
+  If (FileExist(image_file))
+  {
+    GDIPToken := Gdip_Startup()
+
+    pBM := Gdip_CreateBitmapFromFile( image_file )
+    original_treeW:= Gdip_GetImageWidth( pBM )
+    original_treeH:= Gdip_GetImageHeight( pBM )
+
+    Gdip_DisposeImage( pBM )
+    Gdip_Shutdown( GDIPToken )
+
+    ;Only build the tree if the file is a valid size picture
+    If (original_treeW and original_treeH)
+    {
+      If (original_treeW > original_treeH) {
+        treeW := Round( A_ScreenWidth / 2 )
+        treeRatio := treeW / original_treeW
+        treeH := original_treeH * treeRatio
+        If (treeH > Round( A_ScreenHeight * 4 / 5 )){
+          treeH := Round( A_ScreenHeight * 4 / 5 )
+          treeRatio := treeH / original_treeH
+          treeW := original_treeW * treeRatio
+        }
+      } else {
+        treeH := Round( A_ScreenHeight * 4 / 5 )
+        treeRatio := treeH / original_treeH
+        treeW := original_treeW * treeRatio
+      }
+
+	    If (treeSide = "Right") {
+		    xTree := A_ScreenWidth - treeW
+	    } else {
+		    xTree := 0
+	    }
+	    yTree := A_ScreenHeight - treeH
+
+	    Gui, Tree:+E0x20 +E0x80 -Caption +ToolWindow +LastFound +AlwaysOnTop -Resize -DPIScale +hwndTreeWindow
+	    Gui, Tree:Add, Picture, x0 y0 w%treeW% h%treeH%, %image_file%
+
+	    Gui, Tree:Show, x%xTree% y%yTree% w%treeW% h%treeH% NA, Gui Tree
+	    WinSet, Transparent, 240, ahk_id %TreeWindow%
+	  }
+  }
+}
 
 DrawTree() {
   global
@@ -153,7 +201,7 @@ GetDelimitedActListString(data, act, part) {
     }
   } Else {
     currentWatchstones := SubStr(act, 1, 2)
-    Loop, 33
+    Loop, 17 ; because there are 16 stones now, this used to be 33 when there were 32 stones
     {
         watchstoneNumber := A_Index - 1
         If (watchstoneNumber < 10) {
@@ -231,10 +279,10 @@ partSelectUI() {
       UpdateImages()
     }
   } Else {
-    SetMapGuide()
-    SetMapNotes()
+    ;SetMapGuide()
+    ;SetMapNotes()
     If (zone_toggle = 1) {
-      UpdateMapImages()
+      ;UpdateMapImages()
     }
   }
   SetExp()
@@ -260,7 +308,7 @@ actSelectUI() {
     If (zone_toggle = 1) {
       UpdateImages()
     }
-  } Else {
+  } Else { ;This shouldn't happen for this version until we re-enable maps
     ;Save watchstone and conq info
     INIStones=%A_scriptdir%\watchstones.ini
     IniWrite, %CurrentAct%, %INIStones%, Watchstones, collected
@@ -276,10 +324,10 @@ actSelectUI() {
     ;   IniRead, numStones, %INIAtlas%, %CurrentAct%, %key%, 0
     ;   value.SocketedStones := numStones
     ; }
-    SetMapGuide()
-    SetMapNotes()
+    ;SetMapGuide()
+    ;SetMapNotes()
     If (zone_toggle = 1) {
-      UpdateMapImages()
+      ;UpdateMapImages()
     }
   }
   SetExp()
@@ -299,9 +347,9 @@ zoneSelectUI() {
       UpdateImages()
     }
   } Else {
-    SetMapNotes()
+    ;SetMapNotes()
     If (zone_toggle = 1) {
-      UpdateMapImages()
+      ;UpdateMapImages()
     }
   }
   SetExp()

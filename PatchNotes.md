@@ -1,5 +1,21 @@
 # Leveling Guide - Patch Notes
 
+### Crucible League
+* Continued to update gems from past leagues
+* Updated some builds and added community additions
+* No new functionality is planned
+
+### Archnemesis League
+
+* Added an Atlas Passive Tree (default Alt+a to view)
+* Removed Map functionality until the new end game is understood
+* Added the 3 new gems
+  * Updated old gems
+
+#### Minor improvements
+
+* Fixed a bug with monster level in zones after the acts
+
 ### Scourge League
 
 * Added the ability to update the script when it detects a new version
